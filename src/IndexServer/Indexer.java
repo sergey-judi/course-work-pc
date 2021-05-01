@@ -5,15 +5,23 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Indexer {
 
-    List<String> stopWords;
+    private int threadAmount;
+    private List<String> stopWords;
+    private File[] targetFiles;
+    private ConcurrentMap<String, List<String>> invertedIndex;
+    private TreeMap<String, List<String>> sortedInvertedIndex;
 
-    Indexer(String stopWordsPath) {
+    Indexer(String stopWordsPath, int threadAmount) {
+        this.threadAmount = threadAmount;
         this.readStopWords(stopWordsPath);
     }
 
@@ -31,7 +39,7 @@ public class Indexer {
         }
     }
 
-    public void readStopWords(String path) {
+    private void readStopWords(String path) {
         File stopWordsFile = new File(path);
 
         if (stopWordsFile.exists()) {
@@ -46,21 +54,66 @@ public class Indexer {
         }
     }
 
-    public ArrayList<String> reduceText(File file) {
+    public void buildIndex(String path) {
+        this.targetFiles = new File(path).listFiles();
+        this.invertedIndex = new ConcurrentHashMap<String, List<String>>();
+
+        Thread[] threads = new Thread[this.threadAmount];
+
+        for (int i = 0; i < this.threadAmount; i++) {
+            int startIndex = this.targetFiles.length / this.threadAmount * i;
+            int endIndex = (i == (this.threadAmount-1)) ? this.targetFiles.length : this.targetFiles.length / this.threadAmount * (i+1);
+
+            threads[i] = new Thread(() -> this.processFileBlock(startIndex, endIndex));
+            threads[i].start();
+        }
+
+        for (int i = 0; i < this.threadAmount; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException ex){
+                ex.printStackTrace();
+            }
+        }
+
+        this.sortedInvertedIndex = new TreeMap<>(this.invertedIndex);
+    }
+
+    private void processFileBlock(int startIndex, int endIndex) {
+        for (int i = startIndex; i < endIndex; i++) {
+            File currentFile = this.targetFiles[i];
+            String currentFileName = currentFile.getName();
+
+            List<String> reducedText = this.reduceText(currentFile);
+
+            for (String word : reducedText) {
+                List<String> newList = invertedIndex.getOrDefault(word, new ArrayList<String>());
+
+                newList.add(currentFileName);
+                invertedIndex.put(word, newList);
+            }
+        }
+    }
+
+    public List<String> get(String word) {
+        return this.invertedIndex.get(word);
+    }
+
+    private ArrayList<String> reduceText(File file) {
         ArrayList<String> reducedText = new ArrayList<String>();
         try {
             String fileContent = Files.readString(file.toPath())
                     .replaceAll("< *br */ *>", "")
                     .replaceAll("[0-9]+", "");
 
-            Pattern regexPattern = Pattern.compile("\\b\\w+\\b");
+            Pattern regexPattern = Pattern.compile("\\b[^_\\W]+\\b");
             Matcher contentMatcher = regexPattern.matcher(fileContent);
 
             contentMatcher.results()
-                    .parallel()
                     .map(MatchResult::group)
                     .distinct()
                     .forEach(matchingWord -> {
+                        matchingWord = matchingWord.toLowerCase();
                         if (!this.stopWords.contains(matchingWord)) {
                             reducedText.add(matchingWord);
                         }
