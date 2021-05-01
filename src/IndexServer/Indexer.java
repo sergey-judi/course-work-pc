@@ -1,20 +1,20 @@
 package IndexServer;
 
-import org.w3c.dom.ls.LSOutput;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.EmptyStackException;
 import java.util.List;
-import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Indexer {
 
     List<String> stopWords;
+
+    Indexer(String stopWordsPath) {
+        this.readStopWords(stopWordsPath);
+    }
 
     public void listDirectory(String path) {
         File fileIn = new File(path);
@@ -39,9 +39,31 @@ public class Indexer {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            if(this.stopWords.isEmpty()) {
+            if (this.stopWords.isEmpty()) {
                 System.out.println("File \"" + stopWordsFile.getName() + "\" with the given path: \"" + path + "\" is empty.");
             }
         }
+    }
+
+    public ArrayList<String> reduceText(File file) {
+        ArrayList<String> reducedText = new ArrayList<String>();
+        try {
+            String fileContent = Files.readString(file.toPath())
+                    .replaceAll("< *br */ *>", "")
+                    .replaceAll("[0-9]+", "");
+
+            Pattern regexPattern = Pattern.compile("\\b\\w+\\b");
+            Matcher contentMatcher = regexPattern.matcher(fileContent);
+
+            while (contentMatcher.find()) {
+                String currentWord = contentMatcher.group();
+                if (!this.stopWords.contains(currentWord)) {
+                    reducedText.add(currentWord);
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return reducedText;
     }
 }
