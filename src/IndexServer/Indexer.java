@@ -1,8 +1,20 @@
 package IndexServer;
 
+import org.w3c.dom.ls.LSOutput;
+
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.sql.SQLOutput;
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+import java.util.List;
+import java.util.Scanner;
 
 public class Indexer {
+
+    List<String> stopWords;
 
     public void listDirectory(String path) {
         File fileIn = new File(path);
@@ -11,30 +23,25 @@ public class Indexer {
             String filePath = path + "/" + file.getName();
             if (file.isDirectory()) {
                 System.out.println();
-                this.renameFiles(filePath);
+                this.listDirectory(filePath);
             } else {
                 System.out.println(file.getName());
             }
         }
     }
 
-    public void renameFiles(String path) {
-        File fileIn = new File(path);
-        File[] files = fileIn.listFiles();
-        for(File file : files) {
-            String filePath = path + "/" + file.getName();
-            if (file.isDirectory()) {
-                this.renameFiles(filePath);
-            } else {
-                String newFilePath = filePath.substring(0, filePath.indexOf(".")) + "-" + file.getParentFile().getName() + ".txt";
-                File renamedFile = new File(newFilePath);
+    public void readStopWords(String path) {
+        File stopWordsFile = new File(path);
 
-                boolean wasRenamed = file.renameTo(renamedFile);
-                if (!wasRenamed) {
-                    System.out.printf("Error while renaming %n %s %n to %n %s", filePath, newFilePath);
-                }
+        if (stopWordsFile.exists()) {
+            try {
+                this.stopWords = Files.readAllLines(stopWordsFile.toPath());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            if(this.stopWords.isEmpty()) {
+                System.out.println("File \"" + stopWordsFile.getName() + "\" with the given path: \"" + path + "\" is empty.");
             }
         }
     }
-
 }
