@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,12 +56,15 @@ public class Indexer {
             Pattern regexPattern = Pattern.compile("\\b\\w+\\b");
             Matcher contentMatcher = regexPattern.matcher(fileContent);
 
-            while (contentMatcher.find()) {
-                String currentWord = contentMatcher.group();
-                if (!this.stopWords.contains(currentWord)) {
-                    reducedText.add(currentWord);
-                }
-            }
+            contentMatcher.results()
+                    .parallel()
+                    .map(MatchResult::group)
+                    .distinct()
+                    .forEach(matchingWord -> {
+                        if (!this.stopWords.contains(matchingWord)) {
+                            reducedText.add(matchingWord);
+                        }
+                    });
         } catch (IOException ex) {
             ex.printStackTrace();
         }
