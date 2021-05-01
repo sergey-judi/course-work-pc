@@ -108,9 +108,10 @@ public class Indexer {
         ArrayList<String> reducedTextList = new ArrayList<String>();
         String reducedText = textToReduce
                 .replaceAll("< *br */ *>", "")
-                .replaceAll("[0-9]+", "");
+                .replaceAll("[0-9]+", "")
+                .replaceAll("_", " ");
 
-        Pattern regexPattern = Pattern.compile("\\b[^_\\W]+\\b");
+        Pattern regexPattern = Pattern.compile("\\b\\w+\\b");
         Matcher contentMatcher = regexPattern.matcher(reducedText);
 
         contentMatcher.results()
@@ -122,5 +123,17 @@ public class Indexer {
                     }
                 });
         return reducedTextList;
+    }
+
+    public TreeMap<String, List<String>> locateEach(String inputText) {
+        TreeMap<String, List<String>> wordIndex = new TreeMap<>();
+        List<String> reducedInput = this.reduceText(inputText);
+
+        for (String word : reducedInput) {
+            List<String> wordLocations = this.invertedIndex.get(word);
+            wordIndex.put(word, wordLocations);
+        }
+
+        return wordIndex;
     }
 }
