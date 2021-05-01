@@ -84,13 +84,18 @@ public class Indexer {
             File currentFile = this.targetFiles[i];
             String currentFileName = currentFile.getName();
 
-            List<String> reducedText = this.reduceText(currentFile);
+            try {
+                String fileContent =  Files.readString(currentFile.toPath());
+                List<String> reducedText = this.reduceText(fileContent);
 
-            for (String word : reducedText) {
-                List<String> newList = invertedIndex.getOrDefault(word, new ArrayList<String>());
+                for (String word : reducedText) {
+                    List<String> newList = invertedIndex.getOrDefault(word, new ArrayList<String>());
 
-                newList.add(currentFileName);
-                invertedIndex.put(word, newList);
+                    newList.add(currentFileName);
+                    invertedIndex.put(word, newList);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
         }
     }
@@ -99,28 +104,23 @@ public class Indexer {
         return this.invertedIndex.get(word);
     }
 
-    private ArrayList<String> reduceText(File file) {
-        ArrayList<String> reducedText = new ArrayList<String>();
-        try {
-            String fileContent = Files.readString(file.toPath())
-                    .replaceAll("< *br */ *>", "")
-                    .replaceAll("[0-9]+", "");
+    private ArrayList<String> reduceText(String textToReduce) {
+        ArrayList<String> reducedTextList = new ArrayList<String>();
+        String reducedText = textToReduce
+                .replaceAll("< *br */ *>", "")
+                .replaceAll("[0-9]+", "");
 
-            Pattern regexPattern = Pattern.compile("\\b[^_\\W]+\\b");
-            Matcher contentMatcher = regexPattern.matcher(fileContent);
+        Pattern regexPattern = Pattern.compile("\\b[^_\\W]+\\b");
+        Matcher contentMatcher = regexPattern.matcher(reducedText);
 
-            contentMatcher.results()
-                    .map(MatchResult::group)
-                    .distinct()
-                    .forEach(matchingWord -> {
-                        matchingWord = matchingWord.toLowerCase();
-                        if (!this.stopWords.contains(matchingWord)) {
-                            reducedText.add(matchingWord);
-                        }
-                    });
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return reducedText;
+        contentMatcher.results()
+                .map(matchResult -> matchResult.group().toLowerCase())
+                .distinct()
+                .forEach(matchingWord -> {
+                    if (!this.stopWords.contains(matchingWord)) {
+                        reducedTextList.add(matchingWord);
+                    }
+                });
+        return reducedTextList;
     }
 }
