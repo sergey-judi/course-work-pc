@@ -1,10 +1,14 @@
 package IndexServer;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.TreeMap;
 
 public class Server {
@@ -14,11 +18,12 @@ public class Server {
     public static void main(String[] args) {
         Indexer indexBuilder  = new Indexer("stop-words.txt", 4);
         indexBuilder.buildIndex("data");
+        System.out.println("Server is running on port: " + SERVER_PORT);
         try {
             ServerSocket server = new ServerSocket(SERVER_PORT);
             while (true) {
                 Socket clientSocket = server.accept();
-                Thread clientHandler = new Thread(() -> handleClient(clientSocket));
+                Thread clientHandler = new Thread(() -> handleClient(clientSocket, indexBuilder));
                 clientHandler.start();
             }
         } catch (IOException ex) {
@@ -27,18 +32,55 @@ public class Server {
 
     }
 
-    private static void handleClient(Socket clientSocket) {
+    private static void handleClient(Socket clientSocket, Indexer invertedIndex) {
+        String exitHash = generateHash();
+        byte[] encodedHash = exitHash.getBytes();
+        System.out.println("Handling client.");
         try {
-            DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-            DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
-            int messageLength = in.readInt();
-            if (messageLength > 0) {
-                byte[] message = new byte[messageLength];
-                in.readFully(message, 0, messageLength);
-                System.out.println(new String(message));
+            DataInputStream inputStream = new DataInputStream(clientSocket.getInputStream());
+            DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
+
+            sendBytes(encodedHash, outputStream);
+
+            byte[] message;
+            String decodedMessage;
+            while (!Arrays.equals((message = receiveBytes(inputStream)), encodedHash)) {
+                decodedMessage = new String(message);
+                System.out.println("Received " + decodedMessage + ".");
+
+                TreeMap<String, List<String>> locations = invertedIndex.locateEach(decodedMessage);
+
+                ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
+                oos.writeObject(locations);
+                System.out.println("Response sent.");
             }
+            System.out.println("Done work with another client.");
+            clientSocket.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private static String generateHash() {
+        Random random = new Random();
+        String bigLetter = Character.toString(random.nextInt(26) + 65);
+        String smallLetter = Character.toString(random.nextInt(26) + 97);
+        String hash = random.nextInt(20) + bigLetter + random.nextInt(20) + smallLetter;
+        return hash;
+    }
+
+    private static void sendBytes(byte[] encodedMessage, DataOutputStream outputStream) throws IOException {
+        outputStream.writeInt(encodedMessage.length);
+        outputStream.write(encodedMessage);
+    }
+
+    private static byte[] receiveBytes(DataInputStream inputStream) throws IOException {
+        byte[] message = null;
+        int messageLength = inputStream.readInt();
+        if (messageLength > 0) {
+            message = new byte[messageLength];
+            inputStream.readFully(message, 0, messageLength);
+        }
+        return message;
     }
 }
