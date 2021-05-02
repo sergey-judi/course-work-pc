@@ -8,13 +8,12 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Indexer {
 
-    private int threadAmount;
+    private final int threadAmount;
     private List<String> stopWords;
     private File[] targetFiles;
     private ConcurrentMap<String, List<String>> invertedIndex;
@@ -56,6 +55,7 @@ public class Indexer {
 
     public void buildIndex(String path) {
         this.targetFiles = new File(path).listFiles();
+        assert this.targetFiles != null;
         this.invertedIndex = new ConcurrentHashMap<String, List<String>>();
 
         Thread[] threads = new Thread[this.threadAmount];
@@ -101,7 +101,7 @@ public class Indexer {
     }
 
     public List<String> get(String word) {
-        return this.invertedIndex.get(word);
+        return this.sortedInvertedIndex.get(word);
     }
 
     private ArrayList<String> reduceText(String textToReduce) {
@@ -130,7 +130,7 @@ public class Indexer {
         List<String> reducedInput = this.reduceText(inputText);
 
         for (String word : reducedInput) {
-            List<String> wordLocations = this.invertedIndex.get(word);
+            List<String> wordLocations = this.sortedInvertedIndex.get(word);
             wordIndex.put(word, wordLocations);
         }
 
