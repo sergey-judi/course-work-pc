@@ -1,11 +1,9 @@
 package IndexServer;
 
 import Utility.CustomLogger;
+import Utility.IOStreamManager;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
@@ -37,30 +35,31 @@ public class Server {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
     }
 
     private static void handleClient(Socket clientSocket, Indexer invertedIndex, int clientId) {
         String exitHash = generateHash();
         byte[] encodedHash = exitHash.getBytes();
-        logger.info("Handling client#" + clientId + " in " + Thread.currentThread());
+        logger.info("Handling client#" + clientId + " in " + Thread.currentThread().getName());
         try {
-            DataInputStream inputStream = new DataInputStream(clientSocket.getInputStream());
-            DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
+            ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
 
-            sendBytes(encodedHash, outputStream);
+            IOStreamManager socketManager = new IOStreamManager(ois, oos);
 
-            byte[] message;
+            socketManager.send(encodedHash);
+
+            byte[] message = socketManager.receive();
             String decodedMessage;
-            while (!Arrays.equals((message = receiveBytes(inputStream)), encodedHash)) {
+            while (!Arrays.equals(message, encodedHash)) {
                 decodedMessage = new String(message);
                 logger.info("Received '" + decodedMessage + "' from client#" + clientId);
 
                 TreeMap<String, List<String>> locations = invertedIndex.locateEach(decodedMessage);
 
-                ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
-                oos.writeObject(locations);
+                socketManager.sendObject(locations);
                 logger.info("Response sent to client#" + clientId);
+                message = socketManager.receive();
             }
             logger.info("Done work with client#" + clientId);
             clientSocket.close();
@@ -75,20 +74,5 @@ public class Server {
         String smallLetter = Character.toString(random.nextInt(26) + 97);
         String hash = random.nextInt(20) + bigLetter + random.nextInt(20) + smallLetter;
         return hash;
-    }
-
-    private static void sendBytes(byte[] encodedMessage, DataOutputStream outputStream) throws IOException {
-        outputStream.writeInt(encodedMessage.length);
-        outputStream.write(encodedMessage);
-    }
-
-    private static byte[] receiveBytes(DataInputStream inputStream) throws IOException {
-        byte[] message = null;
-        int messageLength = inputStream.readInt();
-        if (messageLength > 0) {
-            message = new byte[messageLength];
-            inputStream.readFully(message, 0, messageLength);
-        }
-        return message;
     }
 }

@@ -1,11 +1,9 @@
 package IndexClient;
 
 import Utility.CustomLogger;
+import Utility.IOStreamManager;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
@@ -20,10 +18,12 @@ public class Client {
         try {
             Socket serverSocket = new Socket("localhost", 9090);
 
-            DataOutputStream outputStream = new DataOutputStream(serverSocket.getOutputStream());
-            DataInputStream inputStream = new DataInputStream(serverSocket.getInputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(serverSocket.getOutputStream());
+            ObjectInputStream ois = new ObjectInputStream(serverSocket.getInputStream());
 
-            byte[] exitHash = receiveBytes(inputStream);
+            IOStreamManager socketManager = new IOStreamManager(ois, oos);
+
+            byte[] exitHash = socketManager.receive();
 
             Scanner terminalScanner = new Scanner(System.in);
             String clientQueryString = "";
@@ -31,11 +31,10 @@ public class Client {
             logger.info("Enter word/combination of words you want to search ('exit' to leave):");
             clientQueryString = terminalScanner.nextLine();
             while (!clientQueryString.equals(CLIENT_STOP_WORD)) {
-                sendBytes(clientQueryString.getBytes(), outputStream);
+                socketManager.send(clientQueryString.getBytes());
                 logger.info("Message '" + clientQueryString + "' was sent.");
-                ObjectInputStream ois = new ObjectInputStream(serverSocket.getInputStream());
 
-                TreeMap<String, List<String>> locations = (TreeMap<String, List<String>>) ois.readObject();
+                TreeMap<String, List<String>> locations = (TreeMap<String, List<String>>) socketManager.receiveObject();
 
                 logger.info("Received response from the server.");
                 if (locations.isEmpty()) {
@@ -58,26 +57,11 @@ public class Client {
                 clientQueryString = terminalScanner.nextLine();
             }
 
-            sendBytes(exitHash, outputStream);
+            socketManager.send(exitHash);
             serverSocket.close();
         } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
 
-    }
-
-    private static void sendBytes(byte[] encodedMessage, DataOutputStream outputStream) throws IOException {
-        outputStream.writeInt(encodedMessage.length);
-        outputStream.write(encodedMessage);
-    }
-
-    private static byte[] receiveBytes(DataInputStream inputStream) throws IOException {
-        byte[] message = null;
-        int messageLength = inputStream.readInt();
-        if (messageLength > 0) {
-            message = new byte[messageLength];
-            inputStream.readFully(message, 0, messageLength);
-        }
-        return message;
     }
 }
