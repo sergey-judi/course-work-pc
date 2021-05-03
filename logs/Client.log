@@ -1,0 +1,24 @@
+[13:57:48 2021/05/03] Enter word/combination of words you want to search ('exit' to leave):
+[13:57:53 2021/05/03] Message 'apple' was sent.
+[13:57:53 2021/05/03] Received response from the server.
+[13:57:53 2021/05/03] Word 'apple' is present in: 
+[13:57:53 2021/05/03] '5381_4-train-neg.txt'
+[13:57:53 2021/05/03] '5383_10-train-pos.txt'
+[13:57:53 2021/05/03] '21557_0-train-unsup.txt'
+[13:57:53 2021/05/03] '5408_7-test-pos.txt'
+[13:57:53 2021/05/03] '5448_4-train-neg.txt'
+[13:57:53 2021/05/03] '5344_3-test-neg.txt'
+[13:57:53 2021/05/03] 
+[13:57:53 2021/05/03] Enter word/combination of words you want to search ('exit' to leave):
+[13:58:34 2021/05/03] Message 'herb' was sent.
+[13:58:34 2021/05/03] Received response from the server.
+[13:58:34 2021/05/03] Word 'herb' is not present in any of the documents.
+[13:58:34 2021/05/03] 
+[13:58:34 2021/05/03] Enter word/combination of words you want to search ('exit' to leave):
+[13:58:49 2021/05/03] Message 'orange' was sent.
+[13:58:49 2021/05/03] Received response from the server.
+[13:58:49 2021/05/03] Word 'orange' is present in: 
+[13:58:49 2021/05/03] '21657_0-train-unsup.txt'
+[13:58:49 2021/05/03] '21794_0-train-unsup.txt'
+[13:58:49 2021/05/03] 
+[13:58:49 2021/05/03] Enter word/combination of words you want to search ('exit' to leave):

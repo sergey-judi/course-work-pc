@@ -111,7 +111,7 @@ public class Indexer {
                 .replaceAll("[0-9]+", "")
                 .replaceAll("_", " ");
 
-        Pattern regexPattern = Pattern.compile("\\b\\w+\\b");
+        Pattern regexPattern = Pattern.compile("\\b\\w+[']*\\w+\\b");
         Matcher contentMatcher = regexPattern.matcher(reducedText);
 
         contentMatcher.results()

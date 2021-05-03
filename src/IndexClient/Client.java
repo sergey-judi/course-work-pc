@@ -1,5 +1,7 @@
 package IndexClient;
 
+import Utility.CustomLogger;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.util.TreeMap;
 public class Client {
 
     private static final String CLIENT_STOP_WORD = "exit";
+    private static CustomLogger logger = new CustomLogger("Client", "logs");
 
     public static void main(String[] args) {
         try {
@@ -23,31 +26,36 @@ public class Client {
             byte[] exitHash = receiveBytes(inputStream);
 
             Scanner terminalScanner = new Scanner(System.in);
-            String clientQueryString;
+            String clientQueryString = "";
 
-            System.out.println("Enter word/combination of words you want to search");
-            while (!(clientQueryString = terminalScanner.nextLine()).equals(CLIENT_STOP_WORD)) {
+            logger.info("Enter word/combination of words you want to search ('exit' to leave):");
+            clientQueryString = terminalScanner.nextLine();
+            while (!clientQueryString.equals(CLIENT_STOP_WORD)) {
                 sendBytes(clientQueryString.getBytes(), outputStream);
-                System.out.println("Message '" + clientQueryString + "' was sent.");
-
+                logger.info("Message '" + clientQueryString + "' was sent.");
                 ObjectInputStream ois = new ObjectInputStream(serverSocket.getInputStream());
 
                 TreeMap<String, List<String>> locations = (TreeMap<String, List<String>>) ois.readObject();
 
-                System.out.println("Received response from the server.");
+                logger.info("Received response from the server.");
+                if (locations.isEmpty()) {
+                    logger.info("None of words entered is present in any of the documents.");
+                } else {
 
-                locations.forEach((word, locationsList) -> {
-                    if (locationsList != null) {
-                        System.out.println("Word '" + word + "' is present in: ");
-                        for (String location : locationsList) {
-                            System.out.println("\t\t" + location);
+                    locations.forEach((word, locationsList) -> {
+                        if (locationsList != null) {
+                            logger.info("Word '" + word + "' is present in: ");
+                            for (String location : locationsList) {
+                                logger.info("'" + location + "'");
+                            }
+                        } else {
+                            logger.info("Word '" + word + "' is not present in any of the documents.");
                         }
-                    } else {
-                        System.out.println("Word '" + word + "' is not present in any of the documents.");
-                    }
-                });
-                System.out.println();
-                System.out.println("Enter word/combination of words you want to search:");
+                    });
+                }
+                logger.info("");
+                logger.info("Enter word/combination of words you want to search ('exit' to leave):");
+                clientQueryString = terminalScanner.nextLine();
             }
 
             sendBytes(exitHash, outputStream);

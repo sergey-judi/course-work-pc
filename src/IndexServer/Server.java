@@ -1,5 +1,7 @@
 package IndexServer;
 
+import Utility.CustomLogger;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,16 +16,22 @@ import java.util.TreeMap;
 public class Server {
 
     private static final int SERVER_PORT = 9090;
+    private static CustomLogger logger = new CustomLogger("Server", "logs");
 
     public static void main(String[] args) {
         Indexer indexBuilder  = new Indexer("stop-words.txt", 4);
         indexBuilder.buildIndex("data");
-        System.out.println("Server is running on port: " + SERVER_PORT);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> logger.info("Shutting down the server.")));
+
         try {
+            logger.info("Server is running on port: " + SERVER_PORT);
             ServerSocket server = new ServerSocket(SERVER_PORT);
+            int clientId = 0;
             while (true) {
                 Socket clientSocket = server.accept();
-                Thread clientHandler = new Thread(() -> handleClient(clientSocket, indexBuilder));
+                int finalClientId = clientId++;
+                Thread clientHandler = new Thread(() -> handleClient(clientSocket, indexBuilder, finalClientId));
                 clientHandler.start();
             }
         } catch (IOException ex) {
@@ -32,10 +40,10 @@ public class Server {
 
     }
 
-    private static void handleClient(Socket clientSocket, Indexer invertedIndex) {
+    private static void handleClient(Socket clientSocket, Indexer invertedIndex, int clientId) {
         String exitHash = generateHash();
         byte[] encodedHash = exitHash.getBytes();
-        System.out.println("Handling client.");
+        logger.info("Handling client#" + clientId + " in " + Thread.currentThread());
         try {
             DataInputStream inputStream = new DataInputStream(clientSocket.getInputStream());
             DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
@@ -46,15 +54,15 @@ public class Server {
             String decodedMessage;
             while (!Arrays.equals((message = receiveBytes(inputStream)), encodedHash)) {
                 decodedMessage = new String(message);
-                System.out.println("Received " + decodedMessage + ".");
+                logger.info("Received '" + decodedMessage + "' from client#" + clientId);
 
                 TreeMap<String, List<String>> locations = invertedIndex.locateEach(decodedMessage);
 
                 ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
                 oos.writeObject(locations);
-                System.out.println("Response sent.");
+                logger.info("Response sent to client#" + clientId);
             }
-            System.out.println("Done work with another client.");
+            logger.info("Done work with client#" + clientId);
             clientSocket.close();
         } catch (IOException ex) {
             ex.printStackTrace();
