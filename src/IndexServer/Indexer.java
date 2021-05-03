@@ -3,9 +3,7 @@ package IndexServer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
@@ -77,6 +75,7 @@ public class Indexer {
         }
 
         this.sortedInvertedIndex = new TreeMap<>(this.invertedIndex);
+        this.invertedIndex.clear();
     }
 
     private void processFileBlock(int startIndex, int endIndex) {
@@ -125,8 +124,8 @@ public class Indexer {
         return reducedTextList;
     }
 
-    public TreeMap<String, List<String>> locateEach(String inputText) {
-        TreeMap<String, List<String>> wordIndex = new TreeMap<>();
+    public Map<String, List<String>> locateEach(String inputText) {
+        Map<String, List<String>> wordIndex = new HashMap<>();
         List<String> reducedInput = this.reduceText(inputText);
 
         for (String word : reducedInput) {

@@ -6,8 +6,8 @@ import Utility.IOStreamManager;
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
-import java.util.TreeMap;
 
 public class Client {
 
@@ -34,7 +34,7 @@ public class Client {
                 socketManager.send(clientQueryString.getBytes());
                 logger.info("Message '" + clientQueryString + "' was sent.");
 
-                TreeMap<String, List<String>> locations = (TreeMap<String, List<String>>) socketManager.receiveObject();
+                Map<String, List<String>> locations = (Map<String, List<String>>) socketManager.receiveObject();
 
                 logger.info("Received response from the server.");
                 if (locations.isEmpty()) {

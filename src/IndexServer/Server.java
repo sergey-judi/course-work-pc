@@ -6,10 +6,7 @@ import Utility.IOStreamManager;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Server {
 
@@ -55,7 +52,7 @@ public class Server {
                 decodedMessage = new String(message);
                 logger.info("Received '" + decodedMessage + "' from client#" + clientId);
 
-                TreeMap<String, List<String>> locations = invertedIndex.locateEach(decodedMessage);
+                Map<String, List<String>> locations = invertedIndex.locateEach(decodedMessage);
 
                 socketManager.sendObject(locations);
                 logger.info("Response sent to client#" + clientId);
