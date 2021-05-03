@@ -21,7 +21,7 @@ public class CustomLogger {
             Formatter customFormatter = new Formatter() {
                 @Override
                 public String format(LogRecord record) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy/MM/dd");
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                     LocalDateTime currentTime = LocalDateTime.now();
 
                     String timeString = formatter.format(currentTime);
