@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 public class Indexer {
 
     private final int threadAmount;
+    private final String indexSnapshotFilePath = "inverted-index.ser";
     private List<String> stopWords;
     private File[] targetFiles;
     private ConcurrentMap<String, List<String>> invertedIndex;
@@ -51,10 +52,10 @@ public class Indexer {
     }
 
     public void buildIndex(String path) {
-        File savedIndex = new File("invertedIndex.ser");
+        File savedIndex = new File(indexSnapshotFilePath);
         if (savedIndex.exists()) {
             try {
-                FileInputStream indexFile = new FileInputStream("invertedIndex.ser");
+                FileInputStream indexFile = new FileInputStream(indexSnapshotFilePath);
                 ObjectInputStream inputStream = new ObjectInputStream(indexFile);
                 this.sortedInvertedIndex = (TreeMap<String, List<String>>) inputStream.readObject();
             } catch (ClassNotFoundException | IOException ex) {
@@ -89,7 +90,7 @@ public class Indexer {
         this.invertedIndex.clear();
 
         try {
-            FileOutputStream indexFile = new FileOutputStream("invertedIndex.ser");
+            FileOutputStream indexFile = new FileOutputStream(indexSnapshotFilePath);
             ObjectOutputStream outputStream = new ObjectOutputStream(indexFile);
             outputStream.writeObject(this.sortedInvertedIndex);
         } catch (IOException ex) {
