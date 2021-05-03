@@ -1,16 +1,15 @@
-[13:57:37 2021/05/03] Server is running on port: 9090
-[13:57:48 2021/05/03] Handling client#0 in Thread[Thread-5,5,main]
-[13:57:53 2021/05/03] Received 'apple' from client#0
-[13:57:53 2021/05/03] Response sent to client#0
-[13:58:08 2021/05/03] Handling client#1 in Thread[Thread-6,5,main]
-[13:58:17 2021/05/03] Received 'banana' from client#1
-[13:58:17 2021/05/03] Response sent to client#1
-[13:58:34 2021/05/03] Received 'herb' from client#0
-[13:58:34 2021/05/03] Response sent to client#0
-[13:58:39 2021/05/03] Received 'isn't' from client#1
-[13:58:39 2021/05/03] Response sent to client#1
-[13:58:43 2021/05/03] Done work with client#1
-[13:58:49 2021/05/03] Received 'orange' from client#0
-[13:58:49 2021/05/03] Response sent to client#0
-[13:58:54 2021/05/03] Done work with client#0
-[13:58:58 2021/05/03] Shutting down the server.
+[18:45:50 2021/05/03] Server is running on port: 9090
+[18:45:58 2021/05/03] Handling client#0 in Thread-1
+[18:46:06 2021/05/03] Received 'java' from client#0
+[18:46:06 2021/05/03] Response sent to client#0
+[18:46:38 2021/05/03] Received 'apple' from client#0
+[18:46:38 2021/05/03] Response sent to client#0
+[18:46:43 2021/05/03] Handling client#1 in Thread-2
+[18:47:00 2021/05/03] Received 'orange' from client#1
+[18:47:00 2021/05/03] Response sent to client#1
+[18:47:02 2021/05/03] Received 'car' from client#1
+[18:47:02 2021/05/03] Response sent to client#1
+[18:47:06 2021/05/03] Done work with client#1
+[18:47:13 2021/05/03] Received 'house' from client#0
+[18:47:13 2021/05/03] Response sent to client#0
+[18:47:15 2021/05/03] Done work with client#0

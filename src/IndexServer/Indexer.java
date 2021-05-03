@@ -1,7 +1,6 @@
 package IndexServer;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,6 +51,18 @@ public class Indexer {
     }
 
     public void buildIndex(String path) {
+        File savedIndex = new File("invertedIndex.ser");
+        if (savedIndex.exists()) {
+            try {
+                FileInputStream indexFile = new FileInputStream("invertedIndex.ser");
+                ObjectInputStream inputStream = new ObjectInputStream(indexFile);
+                this.sortedInvertedIndex = (TreeMap<String, List<String>>) inputStream.readObject();
+            } catch (ClassNotFoundException | IOException ex) {
+                ex.printStackTrace();
+            }
+            return;
+        }
+
         this.targetFiles = new File(path).listFiles();
         assert this.targetFiles != null;
         this.invertedIndex = new ConcurrentHashMap<String, List<String>>();
@@ -76,6 +87,14 @@ public class Indexer {
 
         this.sortedInvertedIndex = new TreeMap<>(this.invertedIndex);
         this.invertedIndex.clear();
+
+        try {
+            FileOutputStream indexFile = new FileOutputStream("invertedIndex.ser");
+            ObjectOutputStream outputStream = new ObjectOutputStream(indexFile);
+            outputStream.writeObject(this.sortedInvertedIndex);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void processFileBlock(int startIndex, int endIndex) {

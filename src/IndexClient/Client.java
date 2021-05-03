@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class Client {
 
-    private static final String CLIENT_STOP_WORD = "exit";
+    private static final String CLIENT_STOP_WORD = "";
     private static CustomLogger logger = new CustomLogger("Client", "logs");
 
     public static void main(String[] args) {
@@ -28,8 +28,9 @@ public class Client {
             Scanner terminalScanner = new Scanner(System.in);
             String clientQueryString = "";
 
-            logger.info("Enter word/combination of words you want to search ('exit' to leave):");
+            System.out.print("Enter word/combination of words you want to search (Press 'Enter' to leave): ");
             clientQueryString = terminalScanner.nextLine();
+            logger.info("Input is: '" + clientQueryString + "'.");
             while (!clientQueryString.equals(CLIENT_STOP_WORD)) {
                 socketManager.send(clientQueryString.getBytes());
                 logger.info("Message '" + clientQueryString + "' was sent.");
@@ -53,8 +54,9 @@ public class Client {
                     });
                 }
                 logger.info("");
-                logger.info("Enter word/combination of words you want to search ('exit' to leave):");
+                System.out.print("Enter word/combination of words you want to search (Press 'Enter' to leave): ");
                 clientQueryString = terminalScanner.nextLine();
+                logger.info("Input is: '" + clientQueryString + "'.");
             }
 
             socketManager.send(exitHash);

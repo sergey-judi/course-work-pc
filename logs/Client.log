@@ -1,24 +1,119 @@
-[13:57:48 2021/05/03] Enter word/combination of words you want to search ('exit' to leave):
-[13:57:53 2021/05/03] Message 'apple' was sent.
-[13:57:53 2021/05/03] Received response from the server.
-[13:57:53 2021/05/03] Word 'apple' is present in: 
-[13:57:53 2021/05/03] '5381_4-train-neg.txt'
-[13:57:53 2021/05/03] '5383_10-train-pos.txt'
-[13:57:53 2021/05/03] '21557_0-train-unsup.txt'
-[13:57:53 2021/05/03] '5408_7-test-pos.txt'
-[13:57:53 2021/05/03] '5448_4-train-neg.txt'
-[13:57:53 2021/05/03] '5344_3-test-neg.txt'
-[13:57:53 2021/05/03] 
-[13:57:53 2021/05/03] Enter word/combination of words you want to search ('exit' to leave):
-[13:58:34 2021/05/03] Message 'herb' was sent.
-[13:58:34 2021/05/03] Received response from the server.
-[13:58:34 2021/05/03] Word 'herb' is not present in any of the documents.
-[13:58:34 2021/05/03] 
-[13:58:34 2021/05/03] Enter word/combination of words you want to search ('exit' to leave):
-[13:58:49 2021/05/03] Message 'orange' was sent.
-[13:58:49 2021/05/03] Received response from the server.
-[13:58:49 2021/05/03] Word 'orange' is present in: 
-[13:58:49 2021/05/03] '21657_0-train-unsup.txt'
-[13:58:49 2021/05/03] '21794_0-train-unsup.txt'
-[13:58:49 2021/05/03] 
-[13:58:49 2021/05/03] Enter word/combination of words you want to search ('exit' to leave):
+[18:46:06 2021/05/03] Input is: 'java'.
+[18:46:06 2021/05/03] Message 'java' was sent.
+[18:46:06 2021/05/03] Received response from the server.
+[18:46:06 2021/05/03] Word 'java' is not present in any of the documents.
+[18:46:06 2021/05/03] 
+[18:46:38 2021/05/03] Input is: 'apple'.
+[18:46:38 2021/05/03] Message 'apple' was sent.
+[18:46:38 2021/05/03] Received response from the server.
+[18:46:38 2021/05/03] Word 'apple' is present in: 
+[18:46:38 2021/05/03] '5381_4-train-neg.txt'
+[18:46:38 2021/05/03] '5383_10-train-pos.txt'
+[18:46:38 2021/05/03] '21557_0-train-unsup.txt'
+[18:46:38 2021/05/03] '5408_7-test-pos.txt'
+[18:46:38 2021/05/03] '5448_4-train-neg.txt'
+[18:46:38 2021/05/03] '5344_3-test-neg.txt'
+[18:46:38 2021/05/03] 
+[18:47:13 2021/05/03] Input is: 'house'.
+[18:47:13 2021/05/03] Message 'house' was sent.
+[18:47:13 2021/05/03] Received response from the server.
+[18:47:13 2021/05/03] Word 'house' is present in: 
+[18:47:13 2021/05/03] '5376_7-test-pos.txt'
+[18:47:13 2021/05/03] '5377_3-test-neg.txt'
+[18:47:13 2021/05/03] '5377_8-test-pos.txt'
+[18:47:13 2021/05/03] '5380_1-test-neg.txt'
+[18:47:13 2021/05/03] '21543_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21547_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5385_1-train-neg.txt'
+[18:47:13 2021/05/03] '5386_2-train-neg.txt'
+[18:47:13 2021/05/03] '5266_7-test-pos.txt'
+[18:47:13 2021/05/03] '5269_10-train-pos.txt'
+[18:47:13 2021/05/03] '21582_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21583_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21585_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21591_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21103_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5284_10-test-pos.txt'
+[18:47:13 2021/05/03] '5285_10-test-pos.txt'
+[18:47:13 2021/05/03] '21138_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5285_7-train-pos.txt'
+[18:47:13 2021/05/03] '5287_10-test-pos.txt'
+[18:47:13 2021/05/03] '5288_3-test-neg.txt'
+[18:47:13 2021/05/03] '21164_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5291_8-test-pos.txt'
+[18:47:13 2021/05/03] '21169_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5295_9-test-pos.txt'
+[18:47:13 2021/05/03] '21683_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21181_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21686_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5296_7-test-pos.txt'
+[18:47:13 2021/05/03] '21694_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5300_7-test-pos.txt'
+[18:47:13 2021/05/03] '21698_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21699_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21700_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5425_1-test-neg.txt'
+[18:47:13 2021/05/03] '5304_10-test-pos.txt'
+[18:47:13 2021/05/03] '5427_3-train-neg.txt'
+[18:47:13 2021/05/03] '5430_3-train-neg.txt'
+[18:47:13 2021/05/03] '5432_2-train-neg.txt'
+[18:47:13 2021/05/03] '5310_9-test-pos.txt'
+[18:47:13 2021/05/03] '21249_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5433_1-train-neg.txt'
+[18:47:13 2021/05/03] '21253_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21254_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21255_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21256_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21750_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5436_7-train-pos.txt'
+[18:47:13 2021/05/03] '21265_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21270_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5318_7-train-pos.txt'
+[18:47:13 2021/05/03] '5441_1-train-neg.txt'
+[18:47:13 2021/05/03] '5441_10-train-pos.txt'
+[18:47:13 2021/05/03] '5443_8-train-pos.txt'
+[18:47:13 2021/05/03] '21290_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5447_10-train-pos.txt'
+[18:47:13 2021/05/03] '5447_4-train-neg.txt'
+[18:47:13 2021/05/03] '21787_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21313_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21796_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21318_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5328_8-train-pos.txt'
+[18:47:13 2021/05/03] '5330_8-test-pos.txt'
+[18:47:13 2021/05/03] '21810_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21811_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21813_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21334_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5334_4-train-neg.txt'
+[18:47:13 2021/05/03] '21837_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5336_8-train-pos.txt'
+[18:47:13 2021/05/03] '5339_8-train-pos.txt'
+[18:47:13 2021/05/03] '5465_4-test-neg.txt'
+[18:47:13 2021/05/03] '21383_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5470_10-train-pos.txt'
+[18:47:13 2021/05/03] '5350_2-train-neg.txt'
+[18:47:13 2021/05/03] '5351_2-train-neg.txt'
+[18:47:13 2021/05/03] '5471_3-train-neg.txt'
+[18:47:13 2021/05/03] '5352_4-train-neg.txt'
+[18:47:13 2021/05/03] '5474_8-test-pos.txt'
+[18:47:13 2021/05/03] '21446_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21464_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21945_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21466_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21467_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21953_0-train-unsup.txt'
+[18:47:13 2021/05/03] '21474_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5485_10-test-pos.txt'
+[18:47:13 2021/05/03] '5366_1-test-neg.txt'
+[18:47:13 2021/05/03] '21971_0-train-unsup.txt'
+[18:47:13 2021/05/03] '5487_8-test-pos.txt'
+[18:47:13 2021/05/03] '5488_2-test-neg.txt'
+[18:47:13 2021/05/03] '5368_3-train-neg.txt'
+[18:47:13 2021/05/03] '5372_7-train-pos.txt'
+[18:47:13 2021/05/03] '5373_7-train-pos.txt'
+[18:47:13 2021/05/03] '5494_7-test-pos.txt'
+[18:47:13 2021/05/03] '5495_10-test-pos.txt'
+[18:47:13 2021/05/03] '5374_8-train-pos.txt'
+[18:47:13 2021/05/03] 
+[18:47:15 2021/05/03] Input is: ''.
