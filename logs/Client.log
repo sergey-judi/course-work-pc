@@ -1,0 +1,24 @@
+[2021/05/04 09:12:59] Input is: 'eggs'.
+[2021/05/04 09:12:59] Message 'eggs' was sent.
+[2021/05/04 09:12:59] Received response from the server.
+[2021/05/04 09:12:59] Word 'eggs' is present in: 
+[2021/05/04 09:12:59] '21753_0-train-unsup.txt'
+[2021/05/04 09:12:59] '5319_4-test-neg.txt'
+[2021/05/04 09:12:59] '5484_4-train-neg.txt'
+[2021/05/04 09:12:59] 
+[2021/05/04 09:13:22] Input is: 'sunshine'.
+[2021/05/04 09:13:22] Message 'sunshine' was sent.
+[2021/05/04 09:13:22] Received response from the server.
+[2021/05/04 09:13:22] Word 'sunshine' is not present in any of the documents.
+[2021/05/04 09:13:22] 
+[2021/05/04 09:13:48] Input is: 'spring'.
+[2021/05/04 09:13:48] Message 'spring' was sent.
+[2021/05/04 09:13:48] Received response from the server.
+[2021/05/04 09:13:48] Word 'spring' is present in: 
+[2021/05/04 09:13:48] '21055_0-train-unsup.txt'
+[2021/05/04 09:13:48] '21130_0-train-unsup.txt'
+[2021/05/04 09:13:48] '5408_7-test-pos.txt'
+[2021/05/04 09:13:48] '5426_10-train-pos.txt'
+[2021/05/04 09:13:48] '5336_8-test-pos.txt'
+[2021/05/04 09:13:48] 
+[2021/05/04 09:13:49] Shutting down.

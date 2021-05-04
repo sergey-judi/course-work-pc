@@ -1,0 +1,15 @@
+[2021/05/04 09:12:41] Server is running on port: 9090
+[2021/05/04 09:12:54] Handling client#0 in Thread-1
+[2021/05/04 09:12:59] Received 'eggs' from client#0
+[2021/05/04 09:12:59] Response sent to client#0
+[2021/05/04 09:13:10] Handling client#1 in Thread-2
+[2021/05/04 09:13:14] Received 'summer' from client#1
+[2021/05/04 09:13:14] Response sent to client#1
+[2021/05/04 09:13:22] Received 'sunshine' from client#0
+[2021/05/04 09:13:22] Response sent to client#0
+[2021/05/04 09:13:38] Received 'job, mouse' from client#1
+[2021/05/04 09:13:38] Response sent to client#1
+[2021/05/04 09:13:40] Done work with client#1
+[2021/05/04 09:13:48] Received 'spring' from client#0
+[2021/05/04 09:13:48] Response sent to client#0
+[2021/05/04 09:13:49] Done work with client#0

@@ -1,27 +1,27 @@
 package IndexServer;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Indexer {
 
-    private int threadAmount;
+    private final int threadAmount;
+    private final String indexSnapshotFilePath = "inverted-index.ser";
+    private final boolean loadFileFlag;
+    private final boolean writeFileFlag;
     private List<String> stopWords;
     private File[] targetFiles;
     private ConcurrentMap<String, List<String>> invertedIndex;
-    private TreeMap<String, List<String>> sortedInvertedIndex;
 
-    Indexer(String stopWordsPath, int threadAmount) {
+    Indexer(String stopWordsPath, int threadAmount, boolean loadFileFlag, boolean writeFileFlag) {
         this.threadAmount = threadAmount;
+        this.loadFileFlag = loadFileFlag;
+        this.writeFileFlag = writeFileFlag;
         this.readStopWords(stopWordsPath);
     }
 
@@ -55,7 +55,22 @@ public class Indexer {
     }
 
     public void buildIndex(String path) {
+        if (this.loadFileFlag) {
+            File savedIndex = new File(indexSnapshotFilePath);
+            if (savedIndex.exists()) {
+                try {
+                    FileInputStream indexFile = new FileInputStream(indexSnapshotFilePath);
+                    ObjectInputStream inputStream = new ObjectInputStream(indexFile);
+                    this.invertedIndex = (ConcurrentMap<String, List<String>>) inputStream.readObject();
+                } catch (ClassNotFoundException | IOException ex) {
+                    ex.printStackTrace();
+                }
+                return;
+            }
+        }
+
         this.targetFiles = new File(path).listFiles();
+        assert this.targetFiles != null;
         this.invertedIndex = new ConcurrentHashMap<String, List<String>>();
 
         Thread[] threads = new Thread[this.threadAmount];
@@ -76,7 +91,15 @@ public class Indexer {
             }
         }
 
-        this.sortedInvertedIndex = new TreeMap<>(this.invertedIndex);
+        if (this.writeFileFlag) {
+            try {
+                FileOutputStream indexFile = new FileOutputStream(indexSnapshotFilePath);
+                ObjectOutputStream outputStream = new ObjectOutputStream(indexFile);
+                outputStream.writeObject(this.invertedIndex);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     private void processFileBlock(int startIndex, int endIndex) {
@@ -111,7 +134,7 @@ public class Indexer {
                 .replaceAll("[0-9]+", "")
                 .replaceAll("_", " ");
 
-        Pattern regexPattern = Pattern.compile("\\b\\w+\\b");
+        Pattern regexPattern = Pattern.compile("\\b\\w+[']*\\w+\\b");
         Matcher contentMatcher = regexPattern.matcher(reducedText);
 
         contentMatcher.results()
@@ -125,8 +148,8 @@ public class Indexer {
         return reducedTextList;
     }
 
-    public TreeMap<String, List<String>> locateEach(String inputText) {
-        TreeMap<String, List<String>> wordIndex = new TreeMap<>();
+    public Map<String, List<String>> locateEach(String inputText) {
+        Map<String, List<String>> wordIndex = new HashMap<>();
         List<String> reducedInput = this.reduceText(inputText);
 
         for (String word : reducedInput) {
