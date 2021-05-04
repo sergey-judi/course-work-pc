@@ -12,13 +12,16 @@ public class Indexer {
 
     private final int threadAmount;
     private final String indexSnapshotFilePath = "inverted-index.ser";
+    private final boolean loadFileFlag;
+    private final boolean writeFileFlag;
     private List<String> stopWords;
     private File[] targetFiles;
     private ConcurrentMap<String, List<String>> invertedIndex;
-    private TreeMap<String, List<String>> sortedInvertedIndex;
 
-    Indexer(String stopWordsPath, int threadAmount) {
+    Indexer(String stopWordsPath, int threadAmount, boolean loadFileFlag, boolean writeFileFlag) {
         this.threadAmount = threadAmount;
+        this.loadFileFlag = loadFileFlag;
+        this.writeFileFlag = writeFileFlag;
         this.readStopWords(stopWordsPath);
     }
 
@@ -52,16 +55,18 @@ public class Indexer {
     }
 
     public void buildIndex(String path) {
-        File savedIndex = new File(indexSnapshotFilePath);
-        if (savedIndex.exists()) {
-            try {
-                FileInputStream indexFile = new FileInputStream(indexSnapshotFilePath);
-                ObjectInputStream inputStream = new ObjectInputStream(indexFile);
-                this.sortedInvertedIndex = (TreeMap<String, List<String>>) inputStream.readObject();
-            } catch (ClassNotFoundException | IOException ex) {
-                ex.printStackTrace();
+        if (this.loadFileFlag) {
+            File savedIndex = new File(indexSnapshotFilePath);
+            if (savedIndex.exists()) {
+                try {
+                    FileInputStream indexFile = new FileInputStream(indexSnapshotFilePath);
+                    ObjectInputStream inputStream = new ObjectInputStream(indexFile);
+                    this.invertedIndex = (ConcurrentMap<String, List<String>>) inputStream.readObject();
+                } catch (ClassNotFoundException | IOException ex) {
+                    ex.printStackTrace();
+                }
+                return;
             }
-            return;
         }
 
         this.targetFiles = new File(path).listFiles();
@@ -86,15 +91,14 @@ public class Indexer {
             }
         }
 
-        this.sortedInvertedIndex = new TreeMap<>(this.invertedIndex);
-        this.invertedIndex.clear();
-
-        try {
-            FileOutputStream indexFile = new FileOutputStream(indexSnapshotFilePath);
-            ObjectOutputStream outputStream = new ObjectOutputStream(indexFile);
-            outputStream.writeObject(this.sortedInvertedIndex);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        if (this.writeFileFlag) {
+            try {
+                FileOutputStream indexFile = new FileOutputStream(indexSnapshotFilePath);
+                ObjectOutputStream outputStream = new ObjectOutputStream(indexFile);
+                outputStream.writeObject(this.invertedIndex);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -120,7 +124,7 @@ public class Indexer {
     }
 
     public List<String> get(String word) {
-        return this.sortedInvertedIndex.get(word);
+        return this.invertedIndex.get(word);
     }
 
     private ArrayList<String> reduceText(String textToReduce) {
@@ -149,7 +153,7 @@ public class Indexer {
         List<String> reducedInput = this.reduceText(inputText);
 
         for (String word : reducedInput) {
-            List<String> wordLocations = this.sortedInvertedIndex.get(word);
+            List<String> wordLocations = this.invertedIndex.get(word);
             wordIndex.put(word, wordLocations);
         }
 

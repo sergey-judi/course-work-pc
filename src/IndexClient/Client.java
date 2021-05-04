@@ -30,8 +30,8 @@ public class Client {
 
             System.out.print("Enter word/combination of words you want to search (Press 'Enter' to leave): ");
             clientQueryString = terminalScanner.nextLine();
-            logger.info("Input is: '" + clientQueryString + "'.");
             while (!clientQueryString.equals(CLIENT_STOP_WORD)) {
+                logger.info("Input is: '" + clientQueryString + "'.");
                 socketManager.send(clientQueryString.getBytes());
                 logger.info("Message '" + clientQueryString + "' was sent.");
 
@@ -56,9 +56,8 @@ public class Client {
                 logger.info("");
                 System.out.print("Enter word/combination of words you want to search (Press 'Enter' to leave): ");
                 clientQueryString = terminalScanner.nextLine();
-                logger.info("Input is: '" + clientQueryString + "'.");
             }
-
+            logger.info("Shutting down.");
             socketManager.send(exitHash);
             serverSocket.close();
         } catch (IOException | ClassNotFoundException ex) {

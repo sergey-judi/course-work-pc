@@ -14,7 +14,7 @@ public class Server {
     private static CustomLogger logger = new CustomLogger("Server", "logs");
 
     public static void main(String[] args) {
-        Indexer indexBuilder  = new Indexer("stop-words.txt", 4);
+        Indexer indexBuilder  = new Indexer("stop-words.txt", 4, true, true);
         indexBuilder.buildIndex("data");
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> logger.info("Shutting down the server.")));
