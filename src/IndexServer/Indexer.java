@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,9 +17,9 @@ public class Indexer {
     private final boolean writeFileFlag;
     private List<String> stopWords;
     private File[] targetFiles;
-    private ConcurrentMap<String, List<String>> invertedIndex;
+    private ConcurrentMap<String, CopyOnWriteArrayList<String>> invertedIndex;
 
-    Indexer(String stopWordsPath, int threadAmount, boolean loadFileFlag, boolean writeFileFlag) {
+    public Indexer(String stopWordsPath, int threadAmount, boolean loadFileFlag, boolean writeFileFlag) {
         this.threadAmount = threadAmount;
         this.loadFileFlag = loadFileFlag;
         this.writeFileFlag = writeFileFlag;
@@ -61,7 +62,8 @@ public class Indexer {
                 try {
                     FileInputStream indexFile = new FileInputStream(indexSnapshotFilePath);
                     ObjectInputStream inputStream = new ObjectInputStream(indexFile);
-                    this.invertedIndex = (ConcurrentMap<String, List<String>>) inputStream.readObject();
+                    this.invertedIndex = (ConcurrentMap<String, CopyOnWriteArrayList<String>>) inputStream.readObject();
+                    inputStream.close();
                 } catch (ClassNotFoundException | IOException ex) {
                     ex.printStackTrace();
                 }
@@ -71,7 +73,7 @@ public class Indexer {
 
         this.targetFiles = new File(path).listFiles();
         assert this.targetFiles != null;
-        this.invertedIndex = new ConcurrentHashMap<String, List<String>>();
+        this.invertedIndex = new ConcurrentHashMap<String, CopyOnWriteArrayList<String>>();
 
         Thread[] threads = new Thread[this.threadAmount];
 
@@ -96,6 +98,7 @@ public class Indexer {
                 FileOutputStream indexFile = new FileOutputStream(indexSnapshotFilePath);
                 ObjectOutputStream outputStream = new ObjectOutputStream(indexFile);
                 outputStream.writeObject(this.invertedIndex);
+                outputStream.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -112,7 +115,7 @@ public class Indexer {
                 List<String> reducedText = this.reduceText(fileContent);
 
                 for (String word : reducedText) {
-                    List<String> newList = invertedIndex.getOrDefault(word, new ArrayList<String>());
+                    CopyOnWriteArrayList<String> newList = invertedIndex.getOrDefault(word, new CopyOnWriteArrayList<String>());
 
                     newList.add(currentFileName);
                     invertedIndex.put(word, newList);

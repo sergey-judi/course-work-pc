@@ -59,6 +59,7 @@ public class Client {
             }
             logger.info("Shutting down.");
             socketManager.send(exitHash);
+            terminalScanner.close();
             serverSocket.close();
         } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
