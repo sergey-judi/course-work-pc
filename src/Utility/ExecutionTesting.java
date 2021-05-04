@@ -3,28 +3,97 @@ package Utility;
 import IndexServer.Indexer;
 
 import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Random;
 
 public class ExecutionTesting {
 
-    private static final int THREAD_RANGE = 8;
-    private static final int THREAD_STEP = 1;
+    private static final int SERVER_PORT = 9090;
+    private static final boolean USE_SOCKETS = false;
+
+    private static final int THREAD_RANGE = 16;
     private static final int[] FILE_RANGE = {2000, 5000, 20000, 50000, 100000};
 
     public static void main(String[] args) {
-        Indexer indexBuilder;
+        try {
+            ServerSocket server ;
+            Socket clientSocket;
 
-        for (int i = 1; i <= THREAD_RANGE; i += THREAD_STEP) {
-            for (int filesAmount : FILE_RANGE) {
-                indexBuilder = new Indexer("stop-words.txt", i, false, false);
-                String testSetPath = String.format("../test-sets/time-test-set-%s/", filesAmount);
-                long startTime = System.nanoTime();
-                indexBuilder.buildIndex(testSetPath);
-                long endTime = System.nanoTime();
-                long execTime = endTime - startTime;
-                System.out.println("Finished index building for '" + testSetPath + "' in " + execTime/1000000.0 + " ms");
+            DataOutputStream oos;
+            DataInputStream ois;
+            if (USE_SOCKETS) {
+                server = new ServerSocket(SERVER_PORT);
+                clientSocket = server.accept();
+
+                oos = new DataOutputStream(clientSocket.getOutputStream());
+                ois = new DataInputStream(clientSocket.getInputStream());
+
+                String exitHash = generateHash();
+                byte[] encodedHash = exitHash.getBytes();
+                oos.write(encodedHash);
+                oos.flush();
+                ois.readUTF();
+
+                for (int filesAmount: FILE_RANGE) {
+                    oos.write(String.valueOf(filesAmount).getBytes());
+                    oos.flush();
+                    ois.readUTF();
+                }
+                oos.write(encodedHash);
+                oos.flush();
+                ois.readUTF();
+
+                oos.write(String.valueOf(THREAD_RANGE).getBytes());
+                oos.flush();
+                ois.readUTF();
             }
-        }
 
+            Indexer indexBuilder;
+
+            System.out.printf("%3s ", "");
+            for (int filesAmount : FILE_RANGE) {
+                System.out.printf("%8s ", filesAmount);
+            }
+            System.out.println();
+
+            for (int threadsAmount = 1; threadsAmount <= THREAD_RANGE; threadsAmount++) {
+                System.out.printf("%3s ", threadsAmount);
+
+                if (USE_SOCKETS) {
+                    oos.write(String.valueOf(threadsAmount).getBytes());
+                    oos.flush();
+                    ois.readUTF();
+                }
+
+                for (int filesAmount : FILE_RANGE) {
+                    indexBuilder = new Indexer("stop-words.txt", threadsAmount, false, false);
+                    String testSetPath = String.format("../test-sets/time-test-set-%s/", filesAmount);
+                    long startTime = System.nanoTime();
+                    indexBuilder.buildIndex(testSetPath);
+                    long endTime = System.nanoTime();
+                    long execTime = endTime - startTime;
+                    System.out.printf("%8.2f ", execTime/1000000.0);
+
+                    if (USE_SOCKETS) {
+                        oos.write(String.valueOf(execTime).getBytes());
+                        oos.flush();
+                        ois.readUTF();
+                    }
+                }
+                System.out.println();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static String generateHash() {
+        Random random = new Random();
+        String bigLetter = Character.toString(random.nextInt(26) + 65);
+        String smallLetter = Character.toString(random.nextInt(26) + 97);
+        String hash = random.nextInt(20) + bigLetter + random.nextInt(20) + smallLetter;
+        return hash;
     }
 
     private static void renameFiles(String path) {
