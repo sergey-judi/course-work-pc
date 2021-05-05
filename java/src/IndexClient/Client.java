@@ -1,7 +1,7 @@
-package IndexClient;
+package src.IndexClient;
 
-import Utility.CustomLogger;
-import Utility.IOStreamManager;
+import src.Utility.CustomLogger;
+import src.Utility.IOStreamManager;
 
 import java.io.*;
 import java.net.Socket;

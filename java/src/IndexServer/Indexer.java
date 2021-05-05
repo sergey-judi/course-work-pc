@@ -1,4 +1,4 @@
-package IndexServer;
+package src.IndexServer;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class Indexer {
 
     private final int threadAmount;
-    private final String indexSnapshotFilePath = "inverted-index.ser";
+    private final String indexSnapshotFilePath = "assets/inverted-index.ser";
     private final boolean loadFileFlag;
     private final boolean writeFileFlag;
     private List<String> stopWords;

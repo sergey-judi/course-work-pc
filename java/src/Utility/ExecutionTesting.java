@@ -1,6 +1,6 @@
-package Utility;
+package src.Utility;
 
-import IndexServer.Indexer;
+import src.IndexServer.Indexer;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -10,7 +10,7 @@ import java.util.Random;
 public class ExecutionTesting {
 
     private static final int SERVER_PORT = 9090;
-    private static final boolean USE_SOCKETS = false;
+    private static final boolean USE_SOCKETS = true;
 
     private static final int THREAD_RANGE = 16;
     private static final int[] FILE_RANGE = {2000, 5000, 20000, 50000, 100000};
@@ -67,7 +67,7 @@ public class ExecutionTesting {
                 }
 
                 for (int filesAmount : FILE_RANGE) {
-                    indexBuilder = new Indexer("stop-words.txt", threadsAmount, false, false);
+                    indexBuilder = new Indexer("assets/stop-words.txt", threadsAmount, false, false);
                     String testSetPath = String.format("../test-sets/time-test-set-%s/", filesAmount);
                     long startTime = System.nanoTime();
                     indexBuilder.buildIndex(testSetPath);

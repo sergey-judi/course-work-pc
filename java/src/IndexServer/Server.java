@@ -1,7 +1,7 @@
-package IndexServer;
+package src.IndexServer;
 
-import Utility.CustomLogger;
-import Utility.IOStreamManager;
+import src.Utility.CustomLogger;
+import src.Utility.IOStreamManager;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -14,7 +14,7 @@ public class Server {
     private static CustomLogger logger = new CustomLogger("Server", "logs");
 
     public static void main(String[] args) {
-        Indexer indexBuilder  = new Indexer("stop-words.txt", 4, true, true);
+        Indexer indexBuilder  = new Indexer("assets/stop-words.txt", 4, true, true);
         indexBuilder.buildIndex("data");
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> logger.info("Shutting down the server.")));
