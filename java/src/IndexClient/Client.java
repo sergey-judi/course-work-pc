@@ -1,7 +1,7 @@
-package IndexClient;
+package src.IndexClient;
 
-import Utility.CustomLogger;
-import Utility.IOStreamManager;
+import src.Utility.CustomLogger;
+import src.Utility.IOStreamManager;
 
 import java.io.*;
 import java.net.Socket;
@@ -59,6 +59,7 @@ public class Client {
             }
             logger.info("Shutting down.");
             socketManager.send(exitHash);
+            terminalScanner.close();
             serverSocket.close();
         } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
