@@ -14,7 +14,7 @@ public class Server {
     private static CustomLogger logger = new CustomLogger("Server", "logs");
 
     public static void main(String[] args) {
-        Indexer indexBuilder  = new Indexer("assets/stop-words.txt", 4, false, true);
+        Indexer indexBuilder = new Indexer("assets/stop-words.txt", 4, false, true);
         indexBuilder.buildIndex("data");
 
         // add ctrl+c terminal interrupt handling
@@ -39,7 +39,7 @@ public class Server {
     private static void handleClient(Socket clientSocket, Indexer invertedIndex, int clientId) {
         /**
          * secret hash to send it to the client
-         * when the exit hash received, it means that the client finished execution 
+         * when the exit hash received, it means that the client finished execution
          */
         String exitHash = generateHash();
         byte[] encodedHash = exitHash.getBytes();

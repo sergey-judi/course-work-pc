@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
@@ -22,7 +23,7 @@ public class Indexer {
     // array of files that an index is built on
     private File[] targetFiles;
     // thread-safe data structure for inverted index
-    private ConcurrentMap<String, CopyOnWriteArrayList<String>> invertedIndex;
+    private ConcurrentMap<String, ConcurrentLinkedQueue<String>> invertedIndex;
 
     public Indexer(String stopWordsPath, int threadAmount, boolean loadFileFlag, boolean writeFileFlag) {
         this.threadAmount = threadAmount;
@@ -68,7 +69,7 @@ public class Indexer {
                 try {
                     FileInputStream indexFile = new FileInputStream(indexSnapshotFilePath);
                     ObjectInputStream inputStream = new ObjectInputStream(indexFile);
-                    this.invertedIndex = (ConcurrentMap<String, CopyOnWriteArrayList<String>>) inputStream.readObject();
+                    this.invertedIndex = (ConcurrentMap<String, ConcurrentLinkedQueue<String>>) inputStream.readObject();
                     inputStream.close();
                 } catch (ClassNotFoundException | IOException ex) {
                     ex.printStackTrace();
@@ -79,7 +80,7 @@ public class Indexer {
 
         this.targetFiles = new File(path).listFiles();
         assert this.targetFiles != null;
-        this.invertedIndex = new ConcurrentHashMap<String, CopyOnWriteArrayList<String>>();
+        this.invertedIndex = new ConcurrentHashMap<String, ConcurrentLinkedQueue<String>>();
 
         Thread[] threads = new Thread[this.threadAmount];
 
@@ -126,7 +127,7 @@ public class Indexer {
 
                 // put each word obtained to the map
                 for (String word : reducedText) {
-                    CopyOnWriteArrayList<String> newList = invertedIndex.getOrDefault(word, new CopyOnWriteArrayList<String>());
+                    ConcurrentLinkedQueue<String> newList = invertedIndex.getOrDefault(word, new ConcurrentLinkedQueue<String>());
 
                     newList.add(currentFileName);
                     invertedIndex.put(word, newList);
@@ -135,10 +136,6 @@ public class Indexer {
                 ex.printStackTrace();
             }
         }
-    }
-
-    public List<String> get(String word) {
-        return this.invertedIndex.get(word);
     }
 
     private ArrayList<String> reduceText(String textToReduce) {
@@ -169,13 +166,16 @@ public class Indexer {
         List<String> reducedInput = this.reduceText(inputText);
 
         for (String word : reducedInput) {
-            List<String> wordLocations = this.invertedIndex.get(word);
+            ConcurrentLinkedQueue<String> wL = this.invertedIndex.get(word);
+            List<String> wordLocations = new ArrayList(wL != null ? wL : new ArrayList<String>());
             wordIndex.put(word, wordLocations);
         }
 
-        // find intersections for all words in inputText string
-        List<String> intersection = intersectLists(wordIndex.values());
-        wordIndex.put(inputText, intersection);
+        if (reducedInput.size() > 1) {
+            // find intersections for all words in inputText string
+            List<String> intersection = intersectLists(wordIndex.values());
+            wordIndex.put("The entire text", intersection);
+        }
 
         return wordIndex;
     }

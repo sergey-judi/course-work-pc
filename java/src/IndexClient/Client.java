@@ -47,17 +47,17 @@ public class Client {
 
                 logger.info("Received response from the server.");
                 if (wordsLocations.isEmpty()) {
-                    logger.info("None of words entered is present in any of the documents.");
+                    logger.info("None of the words entered is present in any of the documents.");
                 } else {
                     // for each word print all locations that it is present in
                     wordsLocations.forEach((word, locationsList) -> {
                         if (!locationsList.isEmpty()) {
-                            logger.info("Word '" + word + "' is present in: ");
+                            logger.info("'" + word + "' is present in: ");
                             for (String location : locationsList) {
-                                logger.info("'" + location + "'");
+                                logger.info("\t'" + location + "'");
                             }
                         } else {
-                            logger.info("Word '" + word + "' is not present in any of the documents.");
+                            logger.info("'" + word + "' is not present in any of the documents.");
                         }
                     });
                 }
