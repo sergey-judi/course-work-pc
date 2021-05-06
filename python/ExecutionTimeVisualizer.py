@@ -88,7 +88,7 @@ def main():
         plt.title(f'Execution time for {files_amount} files')
         plt.xlabel(f'Threads, amount')
         plt.ylabel(f'Execution time, ms')
-        plt.savefig(f'../assets/screenshots/exec-time-{files_amount}', dpi=800, bbox_inches='tight')
+        plt.savefig(f'/assets/screenshots/exec-time-{files_amount}', dpi=800, bbox_inches='tight')
         plt.close()
 
     # plot execution time curve for all amount of files on one plot
@@ -99,7 +99,7 @@ def main():
         plt.title(f'General execution time')
         plt.xlabel(f'Threads, amount')
         plt.ylabel(f'Execution time, ms')
-        plt.savefig(f'../assets/screenshots/exec-time-total', dpi=800, bbox_inches='tight')
+        plt.savefig(f'/assets/screenshots/exec-time-total', dpi=800, bbox_inches='tight')
 
 
 if __name__ == '__main__':
