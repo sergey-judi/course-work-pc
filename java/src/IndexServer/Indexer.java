@@ -11,18 +11,24 @@ import java.util.regex.Pattern;
 
 public class Indexer {
 
+    // amount of threads used to build index
     private final int threadAmount;
+    // destination file to load/write serialized index built for the recent data
     private final String indexSnapshotFilePath = "assets/inverted-index.ser";
     private final boolean loadFileFlag;
     private final boolean writeFileFlag;
+    // stop words obtained from file path given to constructor
     private List<String> stopWords;
+    // array of files that an index is built on
     private File[] targetFiles;
+    // thread-safe data structure for inverted index
     private ConcurrentMap<String, CopyOnWriteArrayList<String>> invertedIndex;
 
     public Indexer(String stopWordsPath, int threadAmount, boolean loadFileFlag, boolean writeFileFlag) {
         this.threadAmount = threadAmount;
         this.loadFileFlag = loadFileFlag;
         this.writeFileFlag = writeFileFlag;
+        // read stop words 
         this.readStopWords(stopWordsPath);
     }
 
@@ -76,7 +82,8 @@ public class Indexer {
         this.invertedIndex = new ConcurrentHashMap<String, CopyOnWriteArrayList<String>>();
 
         Thread[] threads = new Thread[this.threadAmount];
-
+        
+        // run threads for different file blocks
         for (int i = 0; i < this.threadAmount; i++) {
             int startIndex = this.targetFiles.length / this.threadAmount * i;
             int endIndex = (i == (this.threadAmount-1)) ? this.targetFiles.length : this.targetFiles.length / this.threadAmount * (i+1);
@@ -85,6 +92,7 @@ public class Indexer {
             threads[i].start();
         }
 
+        // waiting threads to finish
         for (int i = 0; i < this.threadAmount; i++) {
             try {
                 threads[i].join();
@@ -106,14 +114,17 @@ public class Indexer {
     }
 
     private void processFileBlock(int startIndex, int endIndex) {
+        // read files contents for the interval given
         for (int i = startIndex; i < endIndex; i++) {
             File currentFile = this.targetFiles[i];
             String currentFileName = currentFile.getName();
 
             try {
                 String fileContent =  Files.readString(currentFile.toPath());
+                // remove stop words from file content and unnecessary symbols
                 List<String> reducedText = this.reduceText(fileContent);
-
+                
+                // put each word obtained to the map
                 for (String word : reducedText) {
                     CopyOnWriteArrayList<String> newList = invertedIndex.getOrDefault(word, new CopyOnWriteArrayList<String>());
 
@@ -132,14 +143,15 @@ public class Indexer {
 
     private ArrayList<String> reduceText(String textToReduce) {
         ArrayList<String> reducedTextList = new ArrayList<String>();
+        // remove unnecessary html <br/> tags, digits and underscores
         String reducedText = textToReduce
                 .replaceAll("< *br */ *>", "")
                 .replaceAll("[0-9]+", "")
                 .replaceAll("_", " ");
-
+        // regex to pick words only
         Pattern regexPattern = Pattern.compile("\\b\\w+[']*\\w+\\b");
         Matcher contentMatcher = regexPattern.matcher(reducedText);
-
+        // add all words except for stop words to the list
         contentMatcher.results()
                 .map(matchResult -> matchResult.group().toLowerCase())
                 .distinct()
@@ -153,6 +165,7 @@ public class Indexer {
 
     public Map<String, List<String>> locateEach(String inputText) {
         Map<String, List<String>> wordIndex = new HashMap<>();
+        // remove stop words from client query content and unnecessary symbols
         List<String> reducedInput = this.reduceText(inputText);
 
         for (String word : reducedInput) {

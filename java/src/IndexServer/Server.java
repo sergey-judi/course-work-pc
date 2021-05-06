@@ -14,9 +14,10 @@ public class Server {
     private static CustomLogger logger = new CustomLogger("Server", "logs");
 
     public static void main(String[] args) {
-        Indexer indexBuilder  = new Indexer("assets/stop-words.txt", 4, true, true);
+        Indexer indexBuilder  = new Indexer("assets/stop-words.txt", 4, false, true);
         indexBuilder.buildIndex("data");
 
+        // add ctrl+c terminal interrupt handling
         Runtime.getRuntime().addShutdownHook(new Thread(() -> logger.info("Shutting down the server.")));
 
         try {
@@ -26,6 +27,7 @@ public class Server {
             while (true) {
                 Socket clientSocket = server.accept();
                 int finalClientId = clientId++;
+                // create thread to handle client with obtained socket, invertedIndex and clientId
                 Thread clientHandler = new Thread(() -> handleClient(clientSocket, indexBuilder, finalClientId));
                 clientHandler.start();
             }
@@ -35,6 +37,10 @@ public class Server {
     }
 
     private static void handleClient(Socket clientSocket, Indexer invertedIndex, int clientId) {
+        /**
+         * secret hash to send it to the client
+         * when the exit hash received, it means that the client finished execution 
+         */
         String exitHash = generateHash();
         byte[] encodedHash = exitHash.getBytes();
         logger.info("Handling client#" + clientId + " in " + Thread.currentThread().getName());
@@ -46,15 +52,19 @@ public class Server {
 
             socketManager.send(encodedHash);
 
+            // receive client query string at first
             byte[] message = socketManager.receive();
             String decodedMessage;
+
+            // continue execution if client still don't want to finish 
             while (!Arrays.equals(message, encodedHash)) {
                 decodedMessage = new String(message);
                 logger.info("Received '" + decodedMessage + "' from client#" + clientId);
 
-                Map<String, List<String>> locations = invertedIndex.locateEach(decodedMessage);
-
-                socketManager.sendObject(locations);
+                // obtain a map for each word in the client query string
+                Map<String, List<String>> wordsLocations = invertedIndex.locateEach(decodedMessage);
+                // send it to the client
+                socketManager.sendObject(wordsLocations);
                 logger.info("Response sent to client#" + clientId);
                 message = socketManager.receive();
             }

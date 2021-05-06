@@ -11,7 +11,9 @@ import java.util.Scanner;
 
 public class Client {
 
+    // stop word received from the client, due to which the program ends execution
     private static final String CLIENT_STOP_WORD = "";
+    // log every step to Client.log file
     private static CustomLogger logger = new CustomLogger("Client", "logs");
 
     public static void main(String[] args) {
@@ -20,9 +22,11 @@ public class Client {
 
             ObjectOutputStream oos = new ObjectOutputStream(serverSocket.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(serverSocket.getInputStream());
-
+            
+            // create a manager to communicate with the server using io-streams obtained earlier
             IOStreamManager socketManager = new IOStreamManager(ois, oos);
-
+            
+            // receive secret hash to send it to the server later to let him know that client finished execution
             byte[] exitHash = socketManager.receive();
 
             Scanner terminalScanner = new Scanner(System.in);
@@ -30,19 +34,23 @@ public class Client {
 
             System.out.print("Enter word/combination of words you want to search (Press 'Enter' to leave): ");
             clientQueryString = terminalScanner.nextLine();
+
+            // continue execution if the client didn't enter the stop word
             while (!clientQueryString.equals(CLIENT_STOP_WORD)) {
                 logger.info("Input is: '" + clientQueryString + "'.");
+                // send query to the server
                 socketManager.send(clientQueryString.getBytes());
                 logger.info("Message '" + clientQueryString + "' was sent.");
 
-                Map<String, List<String>> locations = (Map<String, List<String>>) socketManager.receiveObject();
+                // receive answer from the server
+                Map<String, List<String>> wordsLocations = (Map<String, List<String>>) socketManager.receiveObject();
 
                 logger.info("Received response from the server.");
-                if (locations.isEmpty()) {
+                if (wordsLocations.isEmpty()) {
                     logger.info("None of words entered is present in any of the documents.");
                 } else {
-
-                    locations.forEach((word, locationsList) -> {
+                    // for each word print all locations that it is present in
+                    wordsLocations.forEach((word, locationsList) -> {
                         if (locationsList != null) {
                             logger.info("Word '" + word + "' is present in: ");
                             for (String location : locationsList) {
@@ -58,6 +66,7 @@ public class Client {
                 clientQueryString = terminalScanner.nextLine();
             }
             logger.info("Shutting down.");
+            // let server know that the client finished executing
             socketManager.send(exitHash);
             terminalScanner.close();
             serverSocket.close();
