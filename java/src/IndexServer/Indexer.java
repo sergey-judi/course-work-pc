@@ -35,7 +35,7 @@ public class Indexer {
     public void listDirectory(String path) {
         File fileIn = new File(path);
         File[] files = fileIn.listFiles();
-        for(File file : files) {
+        for (File file : files) {
             String filePath = path + "/" + file.getName();
             if (file.isDirectory()) {
                 System.out.println();
@@ -82,11 +82,11 @@ public class Indexer {
         this.invertedIndex = new ConcurrentHashMap<String, CopyOnWriteArrayList<String>>();
 
         Thread[] threads = new Thread[this.threadAmount];
-        
+
         // run threads for different file blocks
         for (int i = 0; i < this.threadAmount; i++) {
             int startIndex = this.targetFiles.length / this.threadAmount * i;
-            int endIndex = (i == (this.threadAmount-1)) ? this.targetFiles.length : this.targetFiles.length / this.threadAmount * (i+1);
+            int endIndex = (i == (this.threadAmount - 1)) ? this.targetFiles.length : this.targetFiles.length / this.threadAmount * (i + 1);
 
             threads[i] = new Thread(() -> this.processFileBlock(startIndex, endIndex));
             threads[i].start();
@@ -96,7 +96,7 @@ public class Indexer {
         for (int i = 0; i < this.threadAmount; i++) {
             try {
                 threads[i].join();
-            } catch (InterruptedException ex){
+            } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
         }
@@ -120,10 +120,10 @@ public class Indexer {
             String currentFileName = currentFile.getName();
 
             try {
-                String fileContent =  Files.readString(currentFile.toPath());
+                String fileContent = Files.readString(currentFile.toPath());
                 // remove stop words from file content and unnecessary symbols
                 List<String> reducedText = this.reduceText(fileContent);
-                
+
                 // put each word obtained to the map
                 for (String word : reducedText) {
                     CopyOnWriteArrayList<String> newList = invertedIndex.getOrDefault(word, new CopyOnWriteArrayList<String>());
@@ -173,6 +173,27 @@ public class Indexer {
             wordIndex.put(word, wordLocations);
         }
 
+        // find intersections for all words in inputText string
+        List<String> intersection = intersectLists(wordIndex.values());
+        wordIndex.put(inputText, intersection);
+
         return wordIndex;
+    }
+
+    private List<String> intersectLists(Collection<List<String>> values) {
+        if (values.isEmpty()) {
+            return null;
+        }
+
+        // obtain the first list
+        Iterator<List<String>> listIterator = values.iterator();
+        List<String> intersectedList = new ArrayList<String>(listIterator.next());
+
+        // intersect all lists
+        while (listIterator.hasNext()) {
+            intersectedList.retainAll(listIterator.next());
+        }
+
+        return intersectedList;
     }
 }

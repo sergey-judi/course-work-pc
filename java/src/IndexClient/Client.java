@@ -51,7 +51,7 @@ public class Client {
                 } else {
                     // for each word print all locations that it is present in
                     wordsLocations.forEach((word, locationsList) -> {
-                        if (locationsList != null) {
+                        if (!locationsList.isEmpty()) {
                             logger.info("Word '" + word + "' is present in: ");
                             for (String location : locationsList) {
                                 logger.info("'" + location + "'");
