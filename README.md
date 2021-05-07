@@ -113,7 +113,7 @@ After compiling files successfully execute the following commands:
         ```sh
         java -cp java/out src.IndexClient.Client
         ```
-    After running this commands, use following client's instructions.
+    After running these commands, use following client's instructions.
 
 - To test index building time using 1 to 16 threads for data placed to ("\../test-sets/time-test-set-_i_.txt", i={2000, 5000, 20000, 50000, 100000})
     1. run java server
@@ -128,9 +128,6 @@ After compiling files successfully execute the following commands:
 
 # Graphical results
 ### Execution time plots for inverted index built on different amount of files running on different amount of threads
-- Using __CopyOnWriteArrayList__ data structure as thread-safe collection for inverted index
-    ![total-1](./assets/screenshots/concurrent-list-exec-time-total.png)
-- Using __ConcurrentLinkedQueue__ data structure as thread-safe collection for inverted index
-    ![total-2](./assets/screenshots/concurrent-queue-exec-time-total.png)
+![total](./assets/screenshots/exec-time-total.png)
 
 For more detailed results see [graphical results](./assets/screenshots/GRAPHICAL-RESULTS.md).

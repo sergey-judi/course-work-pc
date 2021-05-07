@@ -9,37 +9,19 @@ Execution time plots for inverted index built on different amount of files runni
 - [General](#General)
 
 ### Index built for 2000 files
-- Using __CopyOnWriteArrayList__ data structure as thread-safe collection for inverted index
-    ![2000-1](./concurrent-list-exec-time-2000.png)
-- Using __ConcurrentLinkedQueue__ data structure as thread-safe collection for inverted index
-    ![2000-2](./concurrent-queue-exec-time-2000.png)
+![2000](./exec-time-2000.png)
 
 ### Index built for 5000 files
-- Using __CopyOnWriteArrayList__ data structure as thread-safe collection for inverted index
-    ![5000-1](./concurrent-list-exec-time-5000.png)
-- Using __ConcurrentLinkedQueue__ data structure as thread-safe collection for inverted index
-    ![5000-2](./concurrent-queue-exec-time-5000.png)
+![5000](./exec-time-5000.png)
 
 ### Index built for 20000 files
-- Using __CopyOnWriteArrayList__ data structure as thread-safe collection for inverted index
-    ![20000-1](./concurrent-list-exec-time-20000.png)
-- Using __ConcurrentLinkedQueue__ data structure as thread-safe collection for inverted index
-    ![20000-2](./concurrent-queue-exec-time-20000.png)
+![20000](./exec-time-20000.png)
 
 ### Index built for 50000 files
-- Using __CopyOnWriteArrayList__ data structure as thread-safe collection for inverted index
-    ![50000-1](./concurrent-list-exec-time-50000.png)
-- Using __ConcurrentLinkedQueue__ data structure as thread-safe collection for inverted index
-    ![50000-2](./concurrent-queue-exec-time-50000.png)
+![50000](./exec-time-50000.png)
 
 ### Index built for 100000 files
-- Using __CopyOnWriteArrayList__ data structure as thread-safe collection for inverted index
-    ![100000-1](./concurrent-list-exec-time-100000.png)
-- Using __ConcurrentLinkedQueue__ data structure as thread-safe collection for inverted index
-    ![100000-2](./concurrent-queue-exec-time-100000.png)
+![100000](./exec-time-100000.png)
 
 ### General
-- Using __CopyOnWriteArrayList__ data structure as thread-safe collection for inverted index
-    ![total-1](./concurrent-list-exec-time-total.png)
-- Using __ConcurrentLinkedQueue__ data structure as thread-safe collection for inverted index
-    ![total-2](./concurrent-queue-exec-time-total.png)
+![total](./exec-time-total.png)
