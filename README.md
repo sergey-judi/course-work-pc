@@ -23,7 +23,7 @@ _If loadFile is "true", inverted index is loaded from serialized "./assets/inver
 
 _If writeFile is "true", serialized inverted index is written to "./assets/inverted-index.ser" file._
  
-### Usage example:
+### Usage example
 ```java
 int threadAmount = 1;
 boolean loadFile = false;
@@ -109,7 +109,8 @@ After compiling files successfully execute the following commands:
         ```sh
         java -cp java/out src.IndexServer.Server
         ```
-    2. run java client
+    2. Wait for server to display message about successful running on port
+    3. run java client
         ```sh
         java -cp java/out src.IndexClient.Client
         ```
@@ -120,9 +121,10 @@ After compiling files successfully execute the following commands:
         ```sh
         java -cp java/out src.Utility.ExecutionTesting
         ```
-    2. run python client
+    2. Wait for server to run tests on checking inverted index equality
+    3. run python client
         ```sh
-        python python/ExecutinTimeVisualizer.py
+        python python/ExecutionTimeVisualizer.py
         ```
     Check "./assets/screenshots/" for plots built after execution finishing.
 
