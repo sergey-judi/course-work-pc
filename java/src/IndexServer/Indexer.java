@@ -196,4 +196,28 @@ public class Indexer {
 
         return intersectedList;
     }
+
+    private ConcurrentMap<String, ConcurrentLinkedQueue<String>> getIndex() {
+        return this.invertedIndex;
+    }
+
+    public boolean equalsTo(Indexer otherIndexBuilder) {
+        ConcurrentMap<String, ConcurrentLinkedQueue<String>> otherInvertedIndex = otherIndexBuilder.getIndex();
+
+        if (!(this.invertedIndex.keySet().equals(otherInvertedIndex.keySet()))) {
+            return false;
+        }
+
+        for (String word : this.invertedIndex.keySet()) {
+            ConcurrentLinkedQueue<String> locations = this.invertedIndex.get(word);
+            ConcurrentLinkedQueue<String> otherLocations = otherInvertedIndex.get(word);
+            HashSet<String> extraValues = new HashSet<String>();
+            extraValues.addAll(otherLocations);
+            extraValues.removeAll(locations);
+            if (extraValues.size() != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

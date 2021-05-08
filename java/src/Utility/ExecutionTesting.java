@@ -11,7 +11,7 @@ public class ExecutionTesting {
 
     private static final int SERVER_PORT = 9090;
     // use sockets while program running and send execution time to the client
-    private static final boolean USE_SOCKETS = true;
+    private static final boolean USE_SOCKETS = false;
     // the right board for thread amount interval
     private static final int THREAD_RANGE = 16;
     /** 
@@ -22,6 +22,7 @@ public class ExecutionTesting {
     private static final int[] FILE_RANGE = {2000, 5000, 20000, 50000, 100000};
 
     public static void main(String[] args) {
+        testCorrectness();
         try {
             ServerSocket server;
             Socket clientSocket;
@@ -66,14 +67,17 @@ public class ExecutionTesting {
 
             Indexer indexBuilder;
 
-            System.out.printf("%3s ", "");
+            System.out.println("Execution time table");
+            System.out.printf("%14s %32s %n", "Threads amount", "Amount of files");
+
+            System.out.printf("%14s ", "");
             for (int filesAmount : FILE_RANGE) {
                 System.out.printf("%8s ", filesAmount);
             }
             System.out.println();
 
             for (int threadsAmount = 1; threadsAmount <= THREAD_RANGE; threadsAmount++) {
-                System.out.printf("%3s ", threadsAmount);
+                System.out.printf("%14s ", threadsAmount);
 
                 if (USE_SOCKETS) {
                     // send current amount of threads used to create an inverted index
@@ -151,4 +155,18 @@ public class ExecutionTesting {
         }
     }
 
+    public static void testCorrectness() {
+        Indexer indexBuilder = new Indexer("assets/stop-words.txt", 1, false, false);
+        indexBuilder.buildIndex("data");
+
+        System.out.println("Checking if inverted indices are the same");
+        System.out.printf("%14s %10s %n", "Threads amount", "Same index");
+        for (int threadsAmount = 1; threadsAmount <= THREAD_RANGE; threadsAmount++) {
+            Indexer newIndexBuilder = new Indexer("assets/stop-words.txt", threadsAmount, false, false);
+            newIndexBuilder.buildIndex("data");
+            boolean isIndexTheSame = indexBuilder.equalsTo(newIndexBuilder);
+            System.out.printf("%14d %10b %n", threadsAmount, isIndexTheSame);
+        }
+        System.out.println();
+    }
 }
