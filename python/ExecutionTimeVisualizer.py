@@ -55,12 +55,12 @@ def get_time_table():
             print('Thread amount:', thread_amount)
 
             # receive execution time for each files amount
-            for files_amount in range(int(files_range)):
+            for files_amount_id in range(int(files_range)):
                 exec_nano_time = receive(serverSocket)
                 send("", serverSocket)
-                print(f'{files_amount}: exec time:', int(exec_nano_time) / 1000000.0)
+                print(f'{files_amount_list[files_amount_id]}: exec time:', int(exec_nano_time) / 1000000.0)
                 # put execution time in milliseconds to a dictionary
-                time_table[files_amount_list[files_amount]][thread_amount] = int(exec_nano_time) / 1000000.0
+                time_table[files_amount_list[files_amount_id]][thread_amount] = int(exec_nano_time) / 1000000.0
             print()
 
         print('Done job')
@@ -88,7 +88,7 @@ def main():
         plt.title(f'Execution time for {files_amount} files')
         plt.xlabel(f'Threads, amount')
         plt.ylabel(f'Execution time, ms')
-        plt.savefig(f'/assets/screenshots/exec-time-{files_amount}', dpi=800, bbox_inches='tight')
+        plt.savefig(f'./assets/screenshots/exec-time-{files_amount}', dpi=800, bbox_inches='tight')
         plt.close()
 
     # plot execution time curve for all amount of files on one plot
@@ -99,7 +99,7 @@ def main():
         plt.title(f'General execution time')
         plt.xlabel(f'Threads, amount')
         plt.ylabel(f'Execution time, ms')
-        plt.savefig(f'/assets/screenshots/exec-time-total', dpi=800, bbox_inches='tight')
+        plt.savefig(f'./assets/screenshots/exec-time-total', dpi=800, bbox_inches='tight')
 
 
 if __name__ == '__main__':
