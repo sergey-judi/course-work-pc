@@ -79,7 +79,7 @@ public class Indexer {
 
         this.targetFiles = new File(path).listFiles();
         assert this.targetFiles != null;
-        this.invertedIndex = new ConcurrentHashMap<String, ConcurrentLinkedQueue<String>>();
+        this.invertedIndex = new ConcurrentHashMap<String, ConcurrentLinkedQueue<String>>(32768, 0.75f, this.threadAmount);
 
         Thread[] threads = new Thread[this.threadAmount];
 

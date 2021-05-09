@@ -11,7 +11,7 @@ public class ExecutionTesting {
 
     private static final int SERVER_PORT = 9090;
     // use sockets while program running and send execution time to the client
-    private static final boolean USE_SOCKETS = false;
+    private static final boolean USE_SOCKETS = true;
     // the right board for thread amount interval
     private static final int THREAD_RANGE = 16;
     /** 
@@ -161,7 +161,7 @@ public class ExecutionTesting {
 
         System.out.println("Checking if inverted indices are the same");
         System.out.printf("%14s %10s %n", "Threads amount", "Same index");
-        for (int threadsAmount = 1; threadsAmount <= THREAD_RANGE; threadsAmount++) {
+        for (int threadsAmount = 2; threadsAmount <= THREAD_RANGE; threadsAmount++) {
             Indexer newIndexBuilder = new Indexer("assets/stop-words.txt", threadsAmount, false, false);
             newIndexBuilder.buildIndex("data");
             boolean isIndexTheSame = indexBuilder.equalsTo(newIndexBuilder);
