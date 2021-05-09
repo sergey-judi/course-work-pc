@@ -126,10 +126,7 @@ public class Indexer {
 
                 // put each word obtained to the map
                 for (String word : reducedText) {
-                    ConcurrentLinkedQueue<String> newList = invertedIndex.getOrDefault(word, new ConcurrentLinkedQueue<String>());
-
-                    newList.add(currentFileName);
-                    invertedIndex.put(word, newList);
+                    invertedIndex.computeIfAbsent(word, k -> new ConcurrentLinkedQueue<String>()).add(currentFileName);
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -203,11 +200,7 @@ public class Indexer {
     public boolean equalsTo(Indexer otherIndexBuilder) {
         ConcurrentMap<String, ConcurrentLinkedQueue<String>> otherInvertedIndex = otherIndexBuilder.getIndex();
 
-        if (!(this.invertedIndex.keySet().equals(otherInvertedIndex.keySet()))) {
-            return false;
-        }
-
-        for (String word : this.invertedIndex.keySet()) {
+        for (String word : otherInvertedIndex.keySet()) {
             ConcurrentLinkedQueue<String> locations = this.invertedIndex.get(word);
             ConcurrentLinkedQueue<String> otherLocations = otherInvertedIndex.get(word);
             HashSet<String> extraValues = new HashSet<String>();
